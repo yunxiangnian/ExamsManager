@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.lsw.dao.UserDao">
+    <select id="getInfoByPhone" parameterType="string" resultType="com.cloud.lsw.entity.UserEntity">
+        select * from tb_user where phoneNumber = #{phone}
+    </select>
+
+    <select id="registerValid" resultType="integer">
+        select count(1) from tb_user where phoneNumber = #{phone}
+    </select>
+
+    <insert id="insertEntity" parameterType="com.cloud.lsw.entity.UserEntity">
+        insert into tb_user (username,phoneNumber,isTea,password)
+            values(#{entity.username},#{entity.phoneNumber},#{entity.isTea},#{entity.password})
+    </insert>
+
+    <select id="getUserApplyNoticeInfo" resultType="hashmap">
+        select
+        noticeName,state
+        from tb_uploaduserfiles
+        <where>
+            userName = #{map.username} noticeName = #{map.noticeName}
+        </where>
+    </select>
+</mapper>

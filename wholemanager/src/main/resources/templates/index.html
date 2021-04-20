@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/login.css" th:href="@{/css/login.css}">
+    <!-- 引入bootstrap -->
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <title>登录|Login</title>
+</head>
+<script type="text/javascript">
+
+    /**密码验证正则表达式*/
+    function validatePass(obj) {
+        // alert(obj.value);
+        //是否包含数字
+        var ptr_digit = /^.*[0-9]+.*$/;
+        //是否包含小写字母
+        var ptr_lowcase = /^.*[a-z]+.*$/;
+        //是否包含大写字母
+        var ptr_upcase = /^.*[A-Z]+.*$/;
+
+        if(obj.value.length < 6) {
+            //密码长度必须大于6位，密码安全系数较低
+            // alert(1);
+            alert("密码长度必须大于6位，请重新输入");
+        }
+        else if(!ptr_upcase.test(obj.value)){
+            //必须同时包含大、小写字母和数字
+            alert("密码必须包含大写字母,请重新输入");
+        }else if (!ptr_lowcase.test(obj.value)){
+            alert("密码必须包含小写字母,请重新输入");
+        }
+        else if (!ptr_digit.test(obj.value)){
+            alert("密码必须包含数字,请重新输入");
+        }
+    }
+
+    /**validPhoneNumber*/
+    function validPhoneNumber(obj) {
+        const reg = /^1[0-9]{10}$/;
+        if (!reg.test(obj.value)){
+            alert("请输入合法的手机号码！");
+        }
+    }
+
+    function formSubmit() {
+        let phoneNumber = $("#phoneNumber").val();
+        let passwordValue = $("#password").val();
+        if (phoneNumber == null || passwordValue == null){
+            alert("请输入合法的账户凭证和密码！");
+            return false;
+        }
+        if (phoneNumber == "" || passwordValue == ""){
+            alert("请输入合法的账户凭证和密码！");
+            return false;
+        }
+        let form = $("#form1");
+
+        $.ajax({
+            url: "[[@{/html/loginValid}]]",
+            type: "post",
+            data: form.serialize(),
+            success: function (data) {
+                // 200 表示成功
+                if (data.code == 200){
+                    window.location = "/html/Main";
+                }else{
+                    alert("用户名或密码输入错误，请重新输入！");
+                    return false;
+                }
+            },
+            error: function () {
+                alert("系统出现错误！");
+            }
+        })
+    }
+</script>
+<body>
+    <div class="login-box">
+        <h2>欢迎登陆竞赛管家</h2>
+        <form th:id="form1" enctype="multipart/form-data">
+          <div class="user-box">
+            <input type="text" name="phoneNumber" th:id="phoneNumber" required="" th:onchange="validPhoneNumber(this)">
+            <label>登录凭证</label>
+          </div>
+          <div class="user-box">
+            <input type="password" th:id="password" name="password" required="" th:onchange="validatePass(this)">
+            <label>密码</label>
+          </div>
+          <a href="javascript:formSubmit()">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            登录
+          </a>
+          <a th:href="@{/html/register}" target="_blank">
+              还没账号?点击注册</a>
+        </form>
+      </div>
+    </div>
+
+</body>
+</html>
+
+

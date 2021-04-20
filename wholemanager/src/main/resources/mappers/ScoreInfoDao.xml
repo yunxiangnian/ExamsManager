@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.lsw.dao.ScoreInfoDao">
+
+    <resultMap id="baseScoreMap" type="com.cloud.lsw.entity.ScoreinfoEntity" autoMapping="true">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="gameName" property="gameName" jdbcType="VARCHAR"></result>
+        <result column="studentName" property="studentName" jdbcType="VARCHAR"></result>
+        <result column="score" property="score" jdbcType="VARCHAR"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="updateTime" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <select id="getNoticeNameByUser" parameterType="string" resultType="String">
+        select noticeName from tb_notice where createUser = '${createUser}';
+    </select>
+
+    <select id="getInfoById" parameterType="integer" resultMap="baseScoreMap">
+        select
+        <include refid="baseSelect"></include>
+        from
+        tb_scoreinfo
+        where id = #{id}
+    </select>
+
+    <insert id="insertScoreInfo" parameterType="map" useGeneratedKeys="true">
+        insert into tb_scoreinfo(gameName,studentName,score,updateUser,updateTime)
+        values(#{map.selectName},#{map.studentName},#{map.score},#{map.updateUser},#{map.updateTime})
+    </insert>
+
+    <select id="getScoreInfoWithUser" parameterType="map" resultMap="baseScoreMap">
+        select
+        <include refid="baseSelect"></include>
+        from
+        tb_scoreinfo
+        where  updateUser = #{map.user}
+        <if test="map.findByScore != null and map.findByScore != ''">
+            and tb_scoreinfo.studentName = #{map.findByStuName}
+        </if>
+        <if test="map.findByNoticeName != null and map.findByNoticeName != ''">
+            and tb_scoreinfo.gameName = #{map.findByNoticeName}
+        </if>
+    </select>
+
+    <select id="getStuScoreInfo" parameterType="string" resultMap="baseScoreMap">
+        select
+        <include refid="baseSelect"></include>
+        from tb_scoreinfo
+        <where>
+            studentName = #{user}
+        </where>
+    </select>
+
+    <update id="updateScoreInfo" parameterType="map">
+        update tb_scoreinfo set score = #{map.score},updateTime = #{map.modifiedTime}
+        where id = #{map.id}
+    </update>
+
+    <delete id="deleteScoreInfo">
+        delete from tb_scoreinfo where id = #{id}
+    </delete>
+
+
+    <sql id="baseSelect">
+        id,gameName,studentName,score,updateUser,updateTime,remark
+    </sql>
+</mapper>

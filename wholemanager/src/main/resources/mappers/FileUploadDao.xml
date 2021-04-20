@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.lsw.dao.FileUploadDao">
+    <resultMap id="baseMap" type="com.cloud.lsw.entity.FileEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"></id>
+        <result column="userName" property="userName" jdbcType="VARCHAR"></result>
+        <result column="noticeName" property="noticeName" jdbcType="VARCHAR"></result>
+        <result column="fileUrl" property="fileUrl" jdbcType="VARCHAR"></result>
+        <result column="oldName" property="oldName" jdbcType="VARCHAR"></result>
+        <result column="fileName" property="fileName" jdbcType="VARCHAR"></result>
+        <result column="state" property="state" jdbcType="VARCHAR"></result>
+        <result column="fileSize" property="fileSize" jdbcType="VARCHAR"></result>
+        <result column="fileType" property="fileType" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <insert id="insertUploadFileInfo" parameterType="com.cloud.lsw.entity.FileEntity">
+        insert into tb_uploaduserfiles(id,username,noticeName,fileUrl,oldName,fileName,state,fileSize,fileType)
+        values
+        (#{file.id},#{file.userName},#{file.noticeName},#{file.fileUrl},#{file.oldName},#{file.fileName},#{file.state},#{file.fileSize},#{file.fileType})
+    </insert>
+
+    <select id="getApplyResult" parameterType="string" resultMap="baseMap">
+        select
+        <include refid="applyResultSql"></include>
+        from tb_uploaduserfiles
+        <where>
+            userName = #{user}
+        </where>
+    </select>
+
+    <select id="booleanMultiplyApply" resultType="integer">
+        select count(*)
+        from
+        tb_uploaduserfiles
+        <where>
+            noticeName = #{noticeName} and userName = #{user}
+        </where>
+    </select>
+
+    <insert id="updateRemarkAndStateByUUID" parameterType="map">
+        update tb_uploaduserfiles set state = #{map.state},remark = #{map.remark}
+        <where>
+            id = #{map.id}
+        </where>
+    </insert>
+
+    <sql id="applyResultSql">
+        id,userName,noticeName,oldName,state,remark
+    </sql>
+</mapper>

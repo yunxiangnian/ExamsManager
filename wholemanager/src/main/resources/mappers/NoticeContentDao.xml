@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.lsw.dao.NoticeContentDao">
+
+    <resultMap id="baseNoticeInfo" type="com.cloud.lsw.entity.NoticecontentEntity" >
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="noticeName" property="name" jdbcType="VARCHAR"></result>
+        <result column="content" property="content" jdbcType="VARCHAR"></result>
+        <result column="notice_status" property="notice_status" jdbcType="CHAR"></result>
+        <result column="createUser" property="createUser" jdbcType="VARCHAR"></result>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="modifiedTime" property="modifiedTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <insert id="insertNotice" parameterType="map" useGeneratedKeys="true">
+        insert into tb_notice(noticeName,content,notice_status,createUser,createTime)
+        values(#{map.noticeName},#{map.noticeContent},'1',#{map.createUser},#{map.createTime});
+    </insert>
+
+    <select id="getNoticeList" parameterType="map" resultMap="baseNoticeInfo">
+        select
+        <include refid="noticeInfo" />
+        from tb_notice where 1=1
+        <if test="map.findByCreater != null and map.findByCreater != ''">
+                and tb_notice.createUser = #{map.findByCreater}
+        </if>
+        <if test="map.findByNoticeName != null and map.findByNoticeName != ''">
+                and tb_notice.noticeName = #{map.findByNoticeName}
+        </if>
+        and notice_status = '1'
+    </select>
+
+    <select id="getNoticeListWithCreater" resultType="hashmap">
+      SELECT
+            up.id fileUUID,
+            CONCAT(up.fileUrl,'/',up.fileName) filePath,
+            n.noticeName,
+            n.content,
+            up.userName stuName,
+            up.oldName fileName
+      FROM
+            tb_notice n,
+            tb_scoreinfo s,
+            tb_uploaduserfiles up,
+            tb_user u
+      where n.noticeName = s.gameName and s.gameName = up.noticeName and
+                u.username = #{map.user} and n.notice_status = '1' and up.state = '1'
+        <if test="map.findByNoticeName != null and map.findByNoticeName != ''">
+            and n.noticeName = #{map.findByNoticeName}
+        </if>
+    </select>
+
+    <select id="getUpdateInfo" parameterType="integer" resultMap="baseNoticeInfo">
+        select
+        <include refid="noticeInfo" />
+        from tb_notice
+        where id = #{id}
+    </select>
+
+    <delete id="deleteNotice" parameterType="integer">
+        delete from tb_notice where id = #{id}
+    </delete>
+
+    <update id="updateNotice" parameterType="map">
+        update tb_notice set content = '#{map.content}' where id = #{map.id}
+    </update>
+
+    <sql id="noticeInfo">
+        id,noticeName,content,notice_status,createUser,createTime,modifiedTime
+    </sql>
+</mapper>

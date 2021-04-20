@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/login.css" th:href="@{/css/login.css}">
+    <!-- 引入bootstrap -->
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <title>注册页面</title>
+</head>
+<script type="text/javascript">
+    $(function () {
+
+    })
+
+
+    /**密码验证正则表达式*/
+    function validatePass(obj) {
+        // alert(obj.value);
+        //是否包含数字
+        var ptr_digit = /^.*[0-9]+.*$/;
+        //是否包含小写字母
+        var ptr_lowcase = /^.*[a-z]+.*$/;
+        //是否包含大写字母
+        var ptr_upcase = /^.*[A-Z]+.*$/;
+
+        if(obj.value.length < 6) {
+            //密码长度必须大于6位，密码安全系数较低
+            // alert(1);
+            alert("密码长度必须大于6位，请重新输入");
+        }
+        else if(!ptr_upcase.test(obj.value)){
+            //必须同时包含大、小写字母和数字
+            alert("密码必须包含大写字母,请重新输入");
+        }else if (!ptr_lowcase.test(obj.value)){
+            alert("密码必须包含小写字母,请重新输入");
+        }
+        else if (!ptr_digit.test(obj.value)){
+            alert("密码必须包含数字,请重新输入");
+        }
+    }
+
+    /**validPhoneNumber*/
+    function validPhoneNumber(obj) {
+        const reg = /^1[0-9]{10}$/;
+        if (!reg.test(obj.value)){
+            alert("请输入合法的手机号码！");
+        }
+    }
+
+    function formSubmitAjax() {
+        let phoneNumber = $("#phoneNumber").val();
+        let passwordValue = $("#password").val();
+        if (phoneNumber == null || passwordValue == null){
+            alert("请输入合法的账户凭证和密码！");
+            return false;
+        }
+        if (phoneNumber == "" || passwordValue == ""){
+            alert("请输入合法的账户凭证和密码！");
+            return false;
+        }
+        $.ajax({
+            url: "[[@{/html/register/valid}]]",
+            type: "post",
+            data: $('#registerForm').serialize(),
+            success:function (data) {
+                let exist = data.existed;
+                if(exist == 1){
+                    alert("该登录凭证已存在，请重新输入！");
+                }else{
+                    alert("注册成功！页面将会跳转到登录页面");
+                    window.location = "/";
+                }
+            },
+            error:function (err) {
+                alert(err + "系统出现问题，请重试！");
+                return false;
+            }
+        })
+    }
+
+</script>
+<body>
+    <div class="login-box">
+        <h2>欢迎加入ExamsManager</h2>
+        <form th:id="registerForm" method="post" enctype="multipart/form-data">
+            <div class="user-box">
+                <input type="text" name="phoneNumber" th:id="phoneNumber" required="" th:onchange="validPhoneNumber(this)">
+                <label>登录凭证（手机号）</label>
+            </div>
+            <div class="user-box">
+                <input type="password" th:id="password" th:name="password" required=""  th:onchange="validatePass(this)" >
+                <label>密码</label>
+                <span th:id="validResult"></span>
+            </div>
+            <div class="user-box">
+                <input type="text" name="username" th:id="username" required="">
+                <label>账户名称</label>
+            </div>
+            <div>
+                <label>是否为老师：</label>
+                <input th:type="radio" th:name="isTea" value="1" checked>是
+                <input th:type="radio" th:name="isTea" value="0" >否
+
+            </div>
+            <button type="button" class="btn btn-link">
+                <a href="javascript:formSubmitAjax()">
+                    注册
+                </a>
+            </button>
+        </form>
+    </div>
+</body>
+</html>
