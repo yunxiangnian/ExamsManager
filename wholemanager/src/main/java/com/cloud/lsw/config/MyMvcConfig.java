@@ -12,7 +12,7 @@ import javax.annotation.Resource;
  * @create 2021/4/19 22:15
  */
 @Configuration
-public class MyMvcConfig extends WebMvcConfigurerAdapter {
+public class MyMvcConfig implements WebMvcConfigurer {
 
     @Resource
     LoginHandlerInterceptor loginHandlerInterceptor;

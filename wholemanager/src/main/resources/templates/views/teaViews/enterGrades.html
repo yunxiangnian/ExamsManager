@@ -118,7 +118,7 @@
             <ul class="sidebar-menu" data-widget="tree" th:if="${session.role == '1'}">
                 <li class="header">主菜单</li>
                 <!-- 教师菜单开始 -->
-                <li class="active treeview">
+                <li class="treeview">
                     <a href="#">
                         <i class="fa fa-dashboard"></i> <span>竞赛管理</span>
                         <span class="pull-right-container">
@@ -130,14 +130,14 @@
                         <li ><a th:href="@{/html/publishGame}"><i class="fa fa-circle-o"></i>发布竞赛</a></li>
                     </ul>
                 </li>
-                <li class=" treeview">
+                <li class="active treeview">
                     <a href="#">
                         <i class="fa fa-files-o"></i> <span>学生成绩管理</span>
                         <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
               </span>
                     </a>
-                    <ul class="treeview-menu">
+                    <ul class=" treeview-menu">
                         <li class="active">
                             <a th:href="@{/html/enterGrades}">
                                 <i class="fa fa-circle-o"></i>
@@ -153,7 +153,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#">
+                    <a th:href="@{/html/tea/qualifiedAudit}">
                         <i class="fa fa-laptop"></i> <span>资格审核</span>
                     </a>
                 </li>
