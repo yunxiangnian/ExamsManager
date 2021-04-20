@@ -23,12 +23,19 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
     /**用于存储排除拦截的URl*/
     private List<String> list = new ArrayList<>();
 
+    /**默认的响应流字符编码*/
+    private String defaultCharset = "UTF-8";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         Object username = session.getAttribute("username");
+        String contentType = request.getHeader("Accept");
+
         if (username == null){
-            request.getRequestDispatcher("/").forward(request, response);
+            response.setContentType(contentType == null ? "text/html;charset=" + defaultCharset :
+                    contentType + ";charset=" + defaultCharset);
+            response.sendRedirect("/");
             return false;
         }
         return true;
@@ -46,10 +53,10 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         list.add("/static/**");
 
 //         /**静态资源*/
-//        list.add("/images/**");
-//        list.add("/css/**");
-//        list.add("/js/**");
-//        list.add("/plugins/**");
+        list.add("/images/**");
+        list.add("/css/**");
+        list.add("/js/**");
+        list.add("/plugins/**");
         return list;
     }
 }

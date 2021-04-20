@@ -2,10 +2,7 @@ package com.cloud.lsw.config;
 
 import com.cloud.lsw.controller.LoginHandlerInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -15,7 +12,7 @@ import javax.annotation.Resource;
  * @create 2021/4/19 22:15
  */
 @Configuration
-public class MyMvcConfig implements WebMvcConfigurer {
+public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
     @Resource
     LoginHandlerInterceptor loginHandlerInterceptor;
@@ -29,7 +26,6 @@ public class MyMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").
                 addResourceLocations("classpath:/static/**");
-        WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
     /**
@@ -38,7 +34,6 @@ public class MyMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //todo 拦截器静态资源无法通过，404
         registry.addInterceptor(loginHandlerInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(loginHandlerInterceptor.getUrls());
     }
