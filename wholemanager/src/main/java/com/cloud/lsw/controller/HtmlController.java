@@ -79,9 +79,15 @@ public class HtmlController {
         String phoneNumber = (String) map.get("phoneNumber");
         String password = (String) map.get("password");
         UserEntity userEntity = userService.getInfoByPhoneNumber(phoneNumber);
+        /**如果用户获取不到，表示不存在*/
+        if (userEntity == null){
+            jsonObject.put("code", "403");
+            return jsonObject;
+        }
         HttpSession session = request.getSession();
         request.getSession().setAttribute("username", userEntity.getUsername());
         /**1 是老师 0 是学生*/
+        request.getSession().setAttribute("role", userEntity.getIsTea());
         request.getSession().setAttribute("role", userEntity.getIsTea());
         if (password.equals(userEntity.getPassword())) {
             jsonObject.put("code", 200);
