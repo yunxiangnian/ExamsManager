@@ -48,3 +48,7 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
+
+init:
+  port: 8080
